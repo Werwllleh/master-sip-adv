@@ -1,0 +1,104 @@
+@use '../../app/scss/variables.scss' as *;
+@use '../../app/scss/mixins.scss' as *;
+
+// chat
+.chat {
+  background-color: rgba(156, 156, 156, 0.66);
+  backdrop-filter: blur(1rem);
+  border-radius: 3rem 3rem 0 0;
+  overflow: hidden;
+  transform: translateY(30rem) scale(.85);
+  opacity: 0;
+  box-shadow: 0 3rem 3rem rgba(0, 0, 0, 0.08);
+  transition: height 100ms ease, transform 700ms ease-in-out, opacity 700ms ease-in-out;
+
+  &.shown {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .chat-advantages {
+    display: none;
+    padding-block: 3rem;
+    padding-inline: 2rem;
+    background-color: $white;
+
+    @include mobile {
+      display: block;
+    }
+
+    &__list {
+      display: grid;
+      align-items: center;
+      grid-template-columns: 1fr;
+      gap: 2rem 0;
+
+      @include tablet {
+        grid-template-columns: .75fr .47fr .95fr;
+        gap: 0 2rem;
+      }
+    }
+
+    &__item {
+      display: grid;
+      align-items: center;
+      grid-template-columns: 3.8rem 1fr;
+      gap: 0 1rem;
+      cursor: pointer;
+
+      &:hover {
+        .chat-advantages__icon {
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    &__icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 100%;
+      padding: .6rem;
+      background-color: $primary;
+      transition: transform $transition-default;
+
+      svg {
+        width: 2.6rem;
+        height: 2.6rem;
+        color: $white;
+      }
+    }
+
+    &__text {
+      font-size: 1.4rem;
+      line-height: 1.25;
+      font-weight: 600;
+
+      @include tablet {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .chat-messages {
+
+    &__inner {
+      padding-block: 3rem 2rem;
+      padding-inline: 2rem;
+    }
+
+    .chat-message {
+      border-radius: .2rem 1.5rem 1.5rem 1.5rem;
+      box-shadow: 0 .3rem 1rem rgba(38, 36, 60, 0.07);
+      max-width: 55rem;
+      color: $black;
+      padding-block: 1.5rem;
+      padding-inline: 2rem;
+      background-color: $white;
+      font-size: 1.4rem;
+      line-height: 1.55;
+      display: block;
+      transition: all 500ms ease;
+    }
+  }
+}

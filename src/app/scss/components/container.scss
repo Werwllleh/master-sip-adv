@@ -1,0 +1,12 @@
+@use "../mixins.scss" as *;
+
+.container {
+    width: 100%;
+    max-width: 144rem;
+    margin: 0 auto;
+    padding-inline: 1rem;
+
+    @include tablet {
+        padding-inline: 2rem;
+    }
+}

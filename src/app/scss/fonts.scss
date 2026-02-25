@@ -1,0 +1,24 @@
+//Inter Tight
+@font-face {
+  font-family: 'Inter Tight';
+  src: url('../fonts/InterTight/InterTight-Regular.eot');
+  src: url('../fonts/InterTight/InterTight-Regular.eot?#iefix') format('embedded-opentype'),
+  url('../fonts/InterTight/InterTight-Regular.woff2') format('woff2'),
+  url('../fonts/InterTight/InterTight-Regular.woff') format('woff'),
+  url('../fonts/InterTight/InterTight-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Tight';
+  src: url('../fonts/InterTight/InterTight-SemiBold.eot');
+  src: url('../fonts/InterTight/InterTight-SemiBold.eot?#iefix') format('embedded-opentype'),
+  url('../fonts/InterTight/InterTight-SemiBold.woff2') format('woff2'),
+  url('../fonts/InterTight/InterTight-SemiBold.woff') format('woff'),
+  url('../fonts/InterTight/InterTight-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}

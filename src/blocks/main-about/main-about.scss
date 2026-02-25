@@ -1,0 +1,42 @@
+@use '../../app/scss/variables.scss' as *;
+@use '../../app/scss/mixins.scss' as *;
+
+// main-about
+.main-about {
+
+  h1 {
+    font-size: 2.4rem;
+    color: $white;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1.55;
+
+    @include tablet {
+      font-size: 4rem;
+    }
+
+    @include semiDesktop {
+      font-size: 5rem;
+    }
+
+    @include w1250 {
+      font-size: 6rem;
+    }
+  }
+
+  h2 {
+    margin-top: 2rem;
+    font-size: 1.8rem;
+    text-align: center;
+    color: $white;
+    line-height: 1.35;
+
+    @include tablet {
+      font-size: 2.4rem;
+    }
+
+    @include semiDesktop {
+      font-size: 3rem;
+    }
+  }
+}

@@ -1,0 +1,23 @@
+@use '../../app/scss/variables.scss' as *;
+@use '../../app/scss/mixins.scss' as *;
+
+// index
+.page-main {
+
+  &__inner {
+    position: relative;
+    width: 100%;
+    max-width: 95%;
+    margin: 0 auto;
+    z-index: 1;
+
+    @include semiDesktop {
+      max-width: 85rem;
+    }
+  }
+
+  .page-main-about {
+    padding-block: 6rem 4rem;
+  }
+
+}

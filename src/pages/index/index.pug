@@ -1,0 +1,15 @@
+extends ../../app/pug/layouts/base.pug
+
+append vars
+  - title = "MASTER SIP | Строительство домов из СИП панелей"
+  - description = ""
+
+append content
+
+    .page-main
+        .page-main__inner
+            section.page-main-about
+                +mainAbout()
+            section.page-main-chat
+                +chat()
+

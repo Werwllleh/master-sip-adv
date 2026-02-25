@@ -1,0 +1,52 @@
+@use '../../app/scss/variables.scss' as *;
+@use '../../app/scss/mixins.scss' as *;
+
+// header
+.header {
+  padding-block: .5rem 1rem;
+  background-color: rgb(83 118 83 / 64%);
+  backdrop-filter: blur(1rem);
+
+  &__container {}
+
+  &__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 3rem;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform $transition-default;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    svg {
+      width: 9rem;
+      height: 6rem;
+      color: $white;
+
+      @include tablet {
+        width: 10rem;
+        height: 7rem;
+      }
+    }
+  }
+
+  &__contacts {
+
+    .phone {
+      display: block;
+      font-size: 1.6rem;
+      line-height: 1;
+      font-weight: 500;
+      color: $white;
+      white-space: nowrap;
+    }
+  }
+}

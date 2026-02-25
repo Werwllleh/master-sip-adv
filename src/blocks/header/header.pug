@@ -1,0 +1,13 @@
+mixin header()
+    //- регистрация
+    //- +regLibrary('lib-name/lib.css', 'lib-name/lib.js')
+    //- +regComponent('component-name', true, true)
+
+    //header
+    header.header&attributes(attributes)
+        .header__container.container
+            .header__body
+                a(href="/").header__logo
+                    +svg("logo")
+                .header__contacts
+                    a(href=`tel:${phone[0]}`).phone= phone[1]
