@@ -83,6 +83,15 @@ export const scripts = () =>
     .pipe(gulp.dest('dist/js'))
     .pipe(browserSync.stream());
 
+/* ================= scripts libs ================= */
+
+export const scriptsLibs = () =>
+  gulp.src([
+    'src/public/libs/**/*.js',
+  ])
+    .pipe(gulp.dest('dist/libs'))
+    .pipe(browserSync.stream());
+
 /* ================= serve ================= */
 
 export const serve = () => {
@@ -113,6 +122,9 @@ export const serve = () => {
     'src/blocks/**/*.js',
     'src/pages/**/*.js'
   ], scripts);
+  gulp.watch([
+    'src/public/libs/**/*.js'
+  ], scriptsLibs);
   gulp.watch('src/public/**/*', copy);
 
   gulp.watch(
@@ -127,7 +139,7 @@ export const serve = () => {
 export const build = gulp.series(
   cleanDist,
   copy,
-  gulp.parallel(html, styles, scripts)
+  gulp.parallel(html, styles, scripts, scriptsLibs)
 );
 
 export default gulp.series(build, serve);

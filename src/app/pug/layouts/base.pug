@@ -17,6 +17,9 @@ block vars
 
 block use
 
++regLibrary('', 'input-mask/input-mask.js')
++regLibrary('', 'config/config.js')
+
 doctype html
 html(lang="ru")
     head
@@ -38,18 +41,12 @@ html(lang="ru")
 
         .styles-libs
             // Стили библиотек
-            link(rel="stylesheet", href=`libs/lightgallery/lightgallery-bundle.min.css`)
             each style in stylesLibs
                 link(rel="stylesheet", href=`libs/${style}`)
 
         // Скрипты библиотек
-        script(src=`libs/lightgallery/lightgallery.min.js`)
-        script(src=`libs/lightgallery/plugins/lg-zoom.min.js`)
-        script(src=`libs/lightgallery/plugins/lg-rotate.min.js`)
-        script(src=`libs/lightgallery/plugins/lg-fullscreen.min.js`)
-        script(src=`libs/config/config.js`)
         each script in scriptsLibs
-            script(src=`libs/${script}`)
+            script(src=`/libs/${script}`)
         // Скрипты общие
         script(src=`js/common.js`)
         include ../../../sprite/sprite.svg

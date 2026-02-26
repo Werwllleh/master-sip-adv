@@ -3,6 +3,7 @@
 // checkbox
 .checkbox {
     display: inline-flex;
+    position: relative;
 
     &__input {
         display: none;

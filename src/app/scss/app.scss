@@ -125,6 +125,10 @@ body {
     font-family: $font-family;
 }
 
+button {
+    transition: all $transition-default;
+}
+
 .page {
     flex: 1;
     display: flex;
