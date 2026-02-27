@@ -123,7 +123,12 @@ function renderRadioMessage(message, stepIndex) {
       <div class="chat-message__icon"></div>
       <div class="chat-message__inner">
         <div class="chat-message__text">${message.text}</div>
-        <div class="chat-message__buttons">${buttonsHtml}</div>
+        <div 
+            class="chat-message__buttons"
+            style="transform: translateY(3rem); opacity: 0; visibility: hidden;"
+        >
+            ${buttonsHtml}
+        </div>
         <div class="chat-message__date">${formatTime(date)}</div>
       </div>
     `,
@@ -194,8 +199,14 @@ function renderCardMessage(message, stepIndex) {
       <div class="chat-message__icon"></div>
       <div class="chat-message__inner">
         <div class="chat-message__text">${text}</div>
-        ${cardsHtml !== "" ? `<div class="chat-message__cards">${cardsHtml}</div>` : ''}
-        ${buttonsHtml !== "" ? `<div class="chat-message__buttons">${buttonsHtml}</div>` : ''}
+        ${cardsHtml !== "" ? 
+          `<div class="chat-message__cards" style="transform: translateY(3rem); opacity: 0; visibility: hidden;">
+            ${cardsHtml}
+          </div>` : ''}
+        ${buttonsHtml !== "" ? 
+          `<div class="chat-message__buttons" style="transform: translateY(3rem); opacity: 0; visibility: hidden;">
+            ${buttonsHtml}
+          </div>` : ''}
         <div class="chat-message__date">${formatTime(date)}</div>
       </div>
     `,
@@ -211,7 +222,7 @@ function renderPhoneMessage(message, stepIndex) {
         <div class="chat-message__text">${message.text}</div>
         <form class="chat-message__form form-lead" data-goal="submit">
           <input type="text" name="name" autocomplete class="chat-message__input" placeholder="Ваше имя" required>
-          <input type="tel" name="phone" inputmode="numeric" class="chat-message__input" placeholder="+7 (___) ___-__-__" required>
+          <input type="text" name="phone" inputmode="numeric" class="chat-message__input" placeholder="+7 (___) ___-__-__" required>
           <button type="submit" class="chat-message__btn">Отправить</button>
           <label class="checkbox">
             <input type="checkbox" name="agree" required>
@@ -477,7 +488,21 @@ function addMessage(step) {
     scrollToBottom(messageItem);
   }, 300)
 
-  // Навешиваем обработчики для интерактивных типов
+  const buttonsWrap = messageItem.querySelector('.chat-message__buttons');
+  if (buttonsWrap) {
+    setTimeout(() => {
+      buttonsWrap.style = '';
+    }, 350)
+  }
+
+  const cardsWrap = messageItem.querySelector('.chat-message__cards');
+  if (buttonsWrap) {
+    setTimeout(() => {
+      cardsWrap.style = '';
+    }, 350)
+  }
+
+  // Обработчики для интерактивных типов
   const handlers = {
     radio: setupRadioHandlers,
     cards: setupCardHandlers,
@@ -532,12 +557,11 @@ function addUserMessage(text) {
 function nextStep() {
   currentStep = getNextStep(currentStep);
 
+  showTypingIndicator();
+
   const nextMessage = getMessageByStep(currentStep);
 
   if (!nextMessage) return;
-
-  // Показываем индикатор печати перед сообщением
-  showTypingIndicator();
 
   // Проверка на noscroll (задержка перед показом сообщения)
   if (nextMessage.noscroll) {

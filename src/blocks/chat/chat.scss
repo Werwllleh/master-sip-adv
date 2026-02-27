@@ -370,6 +370,11 @@
     }
   }
 
+  &__buttons,
+  &__cards {
+    transition: transform $transition-default6, opacity $transition-default, visibility $transition-default;
+  }
+
   &__inner {
     display: block;
   }
