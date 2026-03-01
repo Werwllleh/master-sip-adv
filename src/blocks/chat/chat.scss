@@ -3,8 +3,11 @@
 
 // chat
 .chat {
-  background-color: rgba(156, 156, 156, 0.3);
-  backdrop-filter: blur(1rem);
+  background-color: rgb(83 118 83);
+  background-image: url("../images/bg-telegram.webp");
+  background-repeat: repeat;
+  background-size: 65% auto;
+  background-position: center;
   border-radius: 3rem 3rem 0 0;
   overflow: hidden;
   transform: translateY(30rem) scale(.85);
@@ -12,26 +15,36 @@
   box-shadow: 0 3rem 3rem rgba(0, 0, 0, 0.08);
   transition: height 100ms ease, transform 700ms ease-in-out, opacity 700ms ease-in-out;
 
+  @include mobile {
+    background-image: none;
+    background-color: rgba(156, 156, 156, 0.3);
+    backdrop-filter: blur(1rem);
+  }
+
   &.shown {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
 
   .chat-advantages {
-    display: none;
-    padding-block: 3rem;
-    padding-inline: 2rem;
+    padding-block: 1.5rem;
+    padding-inline: 1rem;
     background-color: $white;
 
-    @include mobile {
-      display: block;
+    @include mobile  {
+      padding-block: 3rem;
+      padding-inline: 2rem;
     }
 
     &__list {
       display: grid;
       align-items: center;
       grid-template-columns: 1fr;
-      gap: 2rem 0;
+      gap: 1rem 0;
+
+      @include mobile  {
+        gap: 2rem 0;
+      }
 
       @include tablet {
         grid-template-columns: .75fr .47fr .95fr;
@@ -42,9 +55,13 @@
     &__item {
       display: grid;
       align-items: center;
-      grid-template-columns: 3.8rem 1fr;
+      grid-template-columns: 3rem 1fr;
       gap: 0 1rem;
       cursor: pointer;
+
+      @include mobile  {
+        grid-template-columns: 4rem 1fr;
+      }
 
       &:hover {
         .chat-advantages__icon {
@@ -57,25 +74,43 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      width: 3rem;
+      height: 3rem;
       border-radius: 100%;
-      padding: .6rem;
       background-color: $primary;
       transition: transform $transition-default;
 
+      @include mobile  {
+        width: 4rem;
+        height: 4rem;
+      }
+
       svg {
-        width: 2.6rem;
-        height: 2.6rem;
+        width: 2.2rem;
+        height: 2.2rem;
         color: $white;
+
+        @include mobile  {
+          width: 2.65rem;
+          height: 2.65rem;
+        }
       }
     }
 
     &__text {
-      font-size: 1.4rem;
-      line-height: 1.25;
+      font-size: 1.3rem;
+      line-height: 1.4;
       font-weight: 600;
+      max-width: 25rem;
+
+      @include mobile  {
+        font-size: 1.4rem;
+        max-width: none;
+      }
 
       @include tablet {
         font-size: 1.5rem;
+        line-height: 1.25;
       }
     }
   }

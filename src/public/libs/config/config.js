@@ -1,7 +1,7 @@
 const messages = [
   {
     type: 'text',
-    text: 'Здравствуйте! 👋<br>Меня зовут Вера, я онлайн-консультант строительной компании MASTER-SIP. Более 20 лет мы успешно строим дома из СИП панелей по всей России и за рубежом.',
+    text: 'Здравствуйте! 👋<br>Меня зовут Анастасия, я менеджер строительной компании MASTER-SIP. Более 20 лет мы успешно строим объекты из СИП панелей по всей России.',
     step: 1,
     sleep: '1000',
     noscroll: '1500',
@@ -48,10 +48,28 @@ const messages = [
   },
   {
     type: 'radio',
-    text: 'Выберите площадь помещения',
+    text: '{project_plan}',
     step: 5,
-    category: "square",
+    category: "project-plan",
     goal: 'question2',
+    buts: [
+      {
+        type: 'project_yes',
+        text: 'Проект есть',
+      },
+      {
+        type: 'project_no',
+        text: 'Требуется проект',
+      },
+    ],
+    noscroll: false,
+  },
+  {
+    type: 'radio',
+    text: 'Выберите площадь помещения',
+    step: 6,
+    category: "square",
+    goal: 'question3',
     buts: [
       {
         type: 'house_small',
@@ -95,9 +113,9 @@ const messages = [
   {
     type: 'cards',
     text: '{variants}',
-    step: 6,
+    step: 7,
     category: "build-type",
-    goal: 'question3',
+    goal: 'question4',
     noscroll: false,
     buts: [
       //от 300 м2
@@ -203,16 +221,11 @@ const messages = [
   {
     type: 'text',
     text: 'Спасибо за ответы!',
-    step: 7,
-  },
-  {
-    type: 'text',
-    text: 'Я рассчитаю стоимость вашего сруба под ключ и перезвоню Вам через несколько минут.',
     step: 8,
   },
   {
     type: 'text',
-    text: 'А прямо сейчас вышлю каталог наших премиальных бань и домов из кедра.',
+    text: '{pre_last}',
     step: 9,
   },
   {

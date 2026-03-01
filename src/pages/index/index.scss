@@ -7,7 +7,6 @@
   &__inner {
     position: relative;
     width: 100%;
-    max-width: 95%;
     margin: 0 auto;
     z-index: 1;
 
@@ -17,7 +16,16 @@
   }
 
   .page-main-about {
-    padding-block: 6rem 4rem;
+    padding-block: 3rem;
+    padding-inline: 2rem;
+
+    @include mobile {
+      padding-inline: 0;
+    }
+
+    @include tablet {
+      padding-block: 6rem 4rem;
+    }
   }
 
 }

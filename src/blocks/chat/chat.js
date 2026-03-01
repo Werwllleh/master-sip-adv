@@ -93,15 +93,48 @@ function hideTypingIndicator() {
 /* ================= message renderers ================= */
 
 function renderTextMessage(message, stepIndex) {
+
+  let skipValue = false;
+
+  let str = message.text;
+  let text = ''
+
+  if (str === '{pre_last}') {
+    const buildType = userAnswers.question1?.[1];
+    const projectStatus = userAnswers.question2?.[0];
+
+    if (projectStatus.toLowerCase() === 'project_yes') {
+      skipValue = true;
+    } else {
+      switch (buildType?.toLowerCase()) {
+        case 'дом':
+          text = 'Я рассчитаю стоимость вашего дома под ключ и перезвоню Вам через несколько минут.';
+          break;
+        case 'баня':
+          text = 'Я рассчитаю стоимость вашей бани под ключ и перезвоню Вам через несколько минут.';
+          break;
+        case 'гараж':
+          text = 'Я рассчитаю стоимость вашего гаража под ключ и перезвоню Вам через несколько минут.';
+          break;
+        case 'хозяйственная постройка':
+          text = 'Я рассчитаю стоимость вашей хозяйственной постройки под ключ и перезвоню Вам через несколько минут.';
+          break;
+        default:
+          text = 'Я рассчитаю стоимость вашего дома под ключ и перезвоню Вам через несколько минут.';
+          break;
+      }
+    }
+  }
+
   return {
     html: `
       <div class="chat-message__icon"></div>
       <div class="chat-message__inner">
-        <div class="chat-message__text">${message.text}</div>
+        <div class="chat-message__text">${text ? text : str}</div>
         <div class="chat-message__date">${formatTime(date)}</div>
       </div>
     `,
-    skip: false
+    skip: skipValue
   };
 }
 
@@ -109,7 +142,11 @@ function renderRadioMessage(message, stepIndex) {
   let buts = message.buts;
 
   if (message.category === 'square') {
-    buts = message.buts.filter((item) => item.type && item.type.includes(userAnswers.question1?.[0]));
+    if (userAnswers.question2?.[0] === 'project_yes') {
+      buts = []
+    } else {
+      buts = message.buts.filter((item) => item.type && item.type.includes(userAnswers.question1?.[0]));
+    }
   }
 
   const buttonsHtml = buts.map(btn => `
@@ -118,11 +155,38 @@ function renderRadioMessage(message, stepIndex) {
     </button>
   `).join('');
 
+  let str = message.text;
+  let text = ''
+
+  if (str === '{project_plan}') {
+    const buildType = userAnswers.question1?.[1];
+
+    switch (buildType?.toLowerCase()) {
+      case 'дом':
+        str = 'дома';
+        break;
+      case 'баня':
+        str = 'бани';
+        break;
+      case 'гараж':
+        str = 'гаража';
+        break;
+      case 'хозяйственная постройка':
+        str = 'хозяйственной постройки';
+        break;
+      default:
+        str = 'дома';
+        break;
+    }
+
+    text = message.text.replace('{project_plan}', `У Вас есть проект ${str}?`);
+  }
+
   return {
     html: `
       <div class="chat-message__icon"></div>
       <div class="chat-message__inner">
-        <div class="chat-message__text">${message.text}</div>
+        <div class="chat-message__text">${text ? text : str}</div>
         <div 
             class="chat-message__buttons"
             style="transform: translateY(3rem); opacity: 0; visibility: hidden;"
@@ -144,7 +208,7 @@ function renderCardMessage(message, stepIndex) {
   let buttonsHtml = '';
 
   if (message.category === 'build-type') {
-    cards = message.buts.filter((item) => item.type && item.type.includes(userAnswers.question2?.[0]));
+    cards = message.buts.filter((item) => item.type && item.type.includes(userAnswers.question3?.[0]));
   }
 
   if (cards.length) {
@@ -169,6 +233,7 @@ function renderCardMessage(message, stepIndex) {
   }
 
   let str = message.text;
+  let text = ''
 
   if (str === '{variants}') {
     const buildType = userAnswers.question1?.[1];
@@ -190,15 +255,16 @@ function renderCardMessage(message, stepIndex) {
         str = 'дома';
         break;
     }
+
+    text = message.text.replace('{variants}', `Выберите тип ${str}`);
   }
 
-  const text = message.text.replace('{variants}', `Выберите тип ${str}`);
 
   return {
     html: `
       <div class="chat-message__icon"></div>
       <div class="chat-message__inner">
-        <div class="chat-message__text">${text}</div>
+        <div class="chat-message__text">${text ? text : str}</div>
         ${cardsHtml !== "" ? 
           `<div class="chat-message__cards" style="transform: translateY(3rem); opacity: 0; visibility: hidden;">
             ${cardsHtml}
@@ -496,7 +562,7 @@ function addMessage(step) {
   }
 
   const cardsWrap = messageItem.querySelector('.chat-message__cards');
-  if (buttonsWrap) {
+  if (cardsWrap) {
     setTimeout(() => {
       cardsWrap.style = '';
     }, 350)
