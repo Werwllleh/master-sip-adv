@@ -101,8 +101,8 @@ legend {
 
 html {
     background-color: $white;
-    overflow-x: clip;
     font-size: 10px;
+    overflow-y: auto;
 
     &.block {
         overflow: hidden;
@@ -117,7 +117,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    overflow-x: clip;
+    overflow: hidden;
     min-width: 30rem;
     scroll-behavior: smooth;
     text-rendering: optimizeSpeed;
@@ -148,6 +148,8 @@ button {
 
     &__content {
         flex: 1;
+        display: flex;
+        flex-direction: column;
     }
 }
 

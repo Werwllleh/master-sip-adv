@@ -1,0 +1,15 @@
+mixin form(formType = '')
+
+    //form
+    form.form(data-form=formType)&attributes(attributes)
+        fieldset.form__fieldset
+            input.form__input(type="text" name="name" autocomplete placeholder="Ваше имя" required)
+            input.form__input(type="text" name="phone" inputmode="numeric" placeholder="Ваш телефон" required)
+            button(type="submit").form__submit Отправить
+            label.form__agree.checkbox
+                input(type="checkbox" name="agree" required)
+                span.checkbox__box
+                span Даю согласие на&nbsp;
+                    |
+                    |
+                    a(href="") обработку персональных данных

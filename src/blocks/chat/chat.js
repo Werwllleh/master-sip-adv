@@ -12,6 +12,8 @@ function getChatHeight() {
   const chat = document.querySelector('.chat');
   const header = document.querySelector('.header');
 
+
+
   if (!titleSection || !chat || !header) return;
 
   const titleSectionHeight = titleSection.offsetHeight;
@@ -19,7 +21,7 @@ function getChatHeight() {
 
   const chatMinHeightValue = heightWindow - headerHeight - titleSectionHeight;
 
-  chat.style.minHeight = `${(chatMinHeightValue + 50) / 10}rem`;
+  chat.style.minHeight = `${(chatMinHeightValue) / 10}rem`;
 }
 
 function showChat() {
@@ -286,15 +288,17 @@ function renderPhoneMessage(message, stepIndex) {
       <div class="chat-message__icon"></div>
       <div class="chat-message__inner">
         <div class="chat-message__text">${message.text}</div>
-        <form class="chat-message__form form-lead" data-goal="submit">
-          <input type="text" name="name" autocomplete class="chat-message__input" placeholder="Ваше имя" required>
-          <input type="text" name="phone" inputmode="numeric" class="chat-message__input" placeholder="+7 (___) ___-__-__" required>
-          <button type="submit" class="chat-message__btn">Отправить</button>
-          <label class="checkbox">
-            <input type="checkbox" name="agree" required>
-            <span class="checkbox__box"></span>
-            <span>Даю согласие на&nbsp;<a href="">обработку персональных данных</a></span>
-          </label>
+        <form class="chat-message__form form" data-goal="submit" data-form="continuity">
+          <fieldset class="form__fieldset">
+            <input type="text" name="name" autocomplete class="form__input chat-message__input" placeholder="Ваше имя" required>
+            <input type="text" name="phone" inputmode="numeric" class="form__input  chat-message__input" placeholder="+7 (___) ___-__-__" required>
+            <button type="submit" class="form__submit chat-message__btn">Отправить</button>
+            <label class="form__agree checkbox">
+              <input type="checkbox" name="agree" required>
+              <span class="checkbox__box"></span>
+              <span>Даю согласие на&nbsp;<a href="">обработку персональных данных</a></span>
+            </label>
+          </fieldset>
         </form>
         <div class="chat-message__date">${formatTime(date)}</div>
       </div>
@@ -371,98 +375,11 @@ function setupCardHandlers(messageItem, message) {
 }
 
 function setupPhoneHandler(messageItem, message) {
-  const form = messageItem.querySelector('.form-lead');
+  const form = messageItem.querySelector('form[data-form="lead"]');
 
   if (!form) return;
 
-  form.setAttribute('novalidate', '');
-
-  const inputName = form.querySelector('.chat-message__input[name="name"]');
-  const inputPhone = form.querySelector('.chat-message__input[name="phone"]');
-  const checkbox = form.querySelector('.checkbox input[name="agree"]');
-
-  if (!inputName || !inputPhone || !checkbox) return;
-
-  const maskOptions = {
-    mask: '+{7} 000 000-00-00',
-    overwrite: true
-  };
-  const mask = IMask(inputPhone, maskOptions);
-
-
-  function validateField(field) {
-    if (!field.value || (field.type === 'tel' && mask.unmaskedValue.length !== 11)) {
-
-      field.classList.add('error');
-      return false;
-    }
-    field.classList.remove('error');
-    return true;
-  }
-
-  function validateCheckbox(field) {
-    if (!field.checked) {
-      field.closest('.checkbox').classList.add('error');
-      return false;
-    }
-    field.closest('.checkbox').classList.remove('error');
-    return true;
-  }
-
-  inputName.addEventListener('input', function () {
-    if (this.value.length >= 3) {
-      this.classList.remove('error');
-    } else {
-      this.classList.add('error');
-    }
-  });
-
-  inputPhone.addEventListener('input', function () {
-    if (mask.unmaskedValue.length === 11) {
-      this.classList.remove('error');
-    } else {
-      this.classList.add('error');
-    }
-  });
-
-  checkbox.addEventListener('change', function () {
-    if (this.checked) {
-      this.closest('.checkbox').classList.remove('error');
-    }
-  });
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    let isValid = true;
-
-    if (!validateField(inputName)) {
-      isValid = false;
-    }
-    if (!validateField(inputPhone)) {
-      isValid = false;
-    }
-
-    if (!validateCheckbox(checkbox)) {
-      isValid = false;
-    }
-
-    if (isValid) {
-      const formData = {
-        name: inputName.value,
-        phone: inputPhone.value,
-        agree: checkbox.checked
-      };
-
-      // Отправка данных (можно заменить на реальный API)
-      console.log('Форма отправлена:', formData);
-
-      // Очистка формы и переход к следующему шагу
-      form.reset();
-      /*addUserMessage('Форма отправлена');
-      nextStep();*/
-    }
-  });
+  initForm(form);
 }
 
 /* ================= core functions ================= */

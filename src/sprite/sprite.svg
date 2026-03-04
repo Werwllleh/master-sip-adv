@@ -40,6 +40,13 @@
             <path d="M6990 938 c-28 -30 -28 -110 0 -138 20 -20 33 -20 3020 -20 2987 0 3000 0 3020 20 28 28 28 108 0 138 l-21 22 -2999 0 -2999 0 -21 -22z"></path>
         </g>
     </symbol>
+    <symbol fill="currentColor" viewBox="0 0 36 36" version="1.1" id="close"
+         preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink">
+        <path class="clr-i-outline clr-i-outline-path-1"
+              d="M19.41,18l8.29-8.29a1,1,0,0,0-1.41-1.41L18,16.59,9.71,8.29A1,1,0,0,0,8.29,9.71L16.59,18,8.29,26.29a1,1,0,1,0,1.41,1.41L18,19.41l8.29,8.29a1,1,0,0,0,1.41-1.41Z"></path>
+    </symbol>
+
     <symbol fill="currentColor" id="heat" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
             viewBox="0 0 32 32" xml:space="preserve">

@@ -6,15 +6,15 @@ mixin chat()
     .chat&attributes(attributes)
         .chat-advantages
             ul.chat-advantages__list
-                li.chat-advantages__item
+                li.chat-advantages__item(data-modal="advantage")
                     span.chat-advantages__icon
                         +svg("heat")
                     p.chat-advantages__text Летом сохраняют прохладу в&nbsp;доме, а&nbsp;зимой — тепло
-                li.chat-advantages__item
+                li.chat-advantages__item(data-modal="advantage")
                     span.chat-advantages__icon
                         +svg("timing")
                     p.chat-advantages__text Высокие сроки строительства
-                li.chat-advantages__item
+                li.chat-advantages__item(data-modal="advantage")
                     span.chat-advantages__icon
                         +svg("currency")
                     p.chat-advantages__text Меньшая стоимость строительства по&nbsp;сравнению с&nbsp;кирпичными домами

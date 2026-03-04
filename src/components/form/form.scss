@@ -1,0 +1,128 @@
+@use '../../app/scss/variables.scss' as *;
+@use '../../app/scss/mixins.scss' as *;
+
+// form
+.form {
+
+  &__fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem 0;
+  }
+
+  &__input {
+    background-color: $white;
+    padding: 1.4rem 2rem;
+    border-radius: 2.4rem;
+    border: 1px solid $primary;
+    font-size: 1.8rem;
+    font-weight: 600;
+    transition: border-color $transition-default;
+
+    &::placeholder {
+      font-size: 1.6rem;
+      font-weight: 400;
+    }
+
+    &.error {
+      border-color: $red;
+    }
+  }
+
+  &__submit {
+    margin-top: 1rem;
+    background-color: $primary;
+    padding: 1.2rem 2rem;
+    border-radius: 2.4rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: $white;
+    max-width: 50%;
+
+    &:hover {
+      background-color: $primary-hover;
+    }
+
+    &:focus {
+      background-color: $primary-active;
+    }
+  }
+
+  &__agree {
+
+    &.checkbox {
+      align-items: flex-start;
+      gap: 1rem;
+
+      input {
+        flex: 0 0 auto;
+        position: absolute;
+        opacity: 0;
+        width: 2rem;
+        height: 2rem;
+      }
+
+      .checkbox__box {
+        position: relative;
+        flex: 0 0 auto;
+        display: flex;
+        width: 2rem;
+        height: 2rem;
+        border: 1px solid $primary;
+        background-color: transparent;
+        border-radius: .4rem;
+        overflow: hidden;
+        transition: all $transition-default;
+
+        &::before {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          margin: auto;
+          width: 1.8rem;
+          height: 2rem;
+          display: block;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.401 2.9996L12.9861 4.58475L5.57126 11.9996L1 7.42844L2.58509 5.8433L5.57126 8.82937L11.401 2.9996Z' fill='white'/%3E%3C/svg%3E");
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: 1.4rem 1.4rem;
+          content: "";
+          opacity: 0;
+          transition: opacity $transition-default;
+        }
+      }
+
+      input:checked + .checkbox__box {
+        background-color: $primary;
+        border-color: $primary;
+
+        &::before {
+          opacity: 1;
+        }
+      }
+
+      span {
+        line-height: 1.35;
+        color: $primary;
+        font-size: 1.3rem;
+
+        a {
+          color: $primary;
+          text-decoration: underline;
+          text-underline-offset: 5px;
+        }
+      }
+
+      &.error {
+        .checkbox__box {
+          border-color: $red;
+        }
+        a {
+          color: $red;
+        }
+      }
+    }
+  }
+}

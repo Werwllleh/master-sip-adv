@@ -1,0 +1,14 @@
+mixin leadModal(formType='')
+
+    //lead-modal
+    .lead-modal&attributes(attributes)
+        .lead-modal__inner
+            .lead-modal__header
+            .lead-modal__content
+                .lead-modal__message
+                    p
+                        | Здравствуйте!
+                        br
+                        | Напишите свои контакты, и&nbsp;я&nbsp;расскажу Вам подробно обо всех преимуществах строительства СИП объектов
+                .lead-modal__form
+                    +form(formType)

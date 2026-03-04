@@ -3,14 +3,32 @@ const modalList = document.querySelectorAll('.modal')
 if (modalList.length) {
 
   modalList.forEach((modal) => {
-    const closeBtn = modal.querySelector('.modal__close')
-    closeBtn.addEventListener('click', () => closeModal(modal))
+    const closeBtns = modal.querySelectorAll('.modal--close');
 
-    modal.addEventListener('click', (evt) => {
+    let mouseDownInside = false;
+
+    modal.addEventListener('mousedown', (evt) => {
+      mouseDownInside = !!evt.target.closest('.modal__window');
+    });
+    modal.addEventListener('mouseup', (evt) => {
+      const mouseUpInside = !!evt.target.closest('.modal__window');
+
+      if (!mouseDownInside && !mouseUpInside) {
+        closeModal(modal);
+      }
+    });
+
+    if (closeBtns.length) {
+      closeBtns.forEach((closeBtn) => {
+        closeBtn.addEventListener('click', () => closeModal(modal))
+      })
+    }
+
+    /*modal.addEventListener('click', (evt) => {
       if (!evt.target.closest('.modal__window')) {
         closeModal(modal)
       }
-    })
+    })*/
   })
 
   const triggerList = document.querySelectorAll('*[data-modal]')
@@ -50,22 +68,20 @@ function getScrollbarWidth() {
   return scrollbarWidth;
 }
 
-
 function blockWrap(status) {
   const wrap = document.querySelector('html');
-  const headerMessage = document.querySelector('.header__message');
+  const backgroundImage = document.querySelector('.background-image');
+
+  if (!wrap || !backgroundImage) return;
 
   if (status) {
-    // wrap.style.overflow = 'hidden';
     wrap.classList.add('block');
     wrap.style.marginRight = getScrollbarWidth() + 'px';
-
-    headerMessage.style.left = `-${getScrollbarWidth()}px`;
+    backgroundImage.style.marginRight = getScrollbarWidth() + 'px';
   } else {
-    // wrap.style.overflow = '';
     wrap.classList.remove('block');
     wrap.style.marginRight = '';
-    headerMessage.style.left = '';
+    backgroundImage.style.marginRight = '';
   }
 }
 
