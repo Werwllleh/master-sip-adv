@@ -126,6 +126,7 @@ export const serve = () => {
     'src/public/libs/**/*.js'
   ], scriptsLibs);
   gulp.watch('src/public/**/*', copy);
+  gulp.watch('src/config.json');
 
   gulp.watch(
     ['src/sprite/sprite.svg', 'src/data/**/*'],

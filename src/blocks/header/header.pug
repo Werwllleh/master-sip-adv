@@ -11,3 +11,22 @@ mixin header()
                     +svg("logo")
                 .header__contacts
                     a(href=`tel:${phone[0]}`).phone= phone[1]
+                button(type="button").header__mobile-button
+                    span.dots
+                        span
+                        span
+                        span
+                    span.close
+                        +svg("close")
+        .header-mobile-wrap
+            .container
+                .header-mobile-wrap__body
+                    a(href="/").header-mobile-wrap__logo
+                        +svg("logo")
+                    .header-mobile-wrap__address
+                        p= address
+                    .header-mobile-wrap__description
+                        p Надёжный подрядчик в&nbsp;строительстве Вашего дома
+                    .header-mobile-wrap__contacts
+                        a(href=`tel:${phone[0]}`).phone= phone[1]
+

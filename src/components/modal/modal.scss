@@ -75,8 +75,8 @@
 
 	&__close {
 		position: absolute;
-		top: -3rem;
-		right: -3rem;
+		top: -4.5rem;
+		right: 0;
 		width: 3.5rem;
 		height: 3.5rem;
 		display: flex;
@@ -97,6 +97,11 @@
 			width: 2rem;
 			height: 2rem;
 			color: $primary;
+		}
+
+		@include mobile {
+			top: -3rem;
+			right: -3rem;
 		}
 	}
 }

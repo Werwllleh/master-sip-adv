@@ -3,7 +3,7 @@ const modalList = document.querySelectorAll('.modal')
 if (modalList.length) {
 
   modalList.forEach((modal) => {
-    const closeBtns = modal.querySelectorAll('.modal--close');
+    const closeBtns = modal.querySelectorAll('.modal__close');
 
     let mouseDownInside = false;
 
@@ -20,6 +20,7 @@ if (modalList.length) {
 
     if (closeBtns.length) {
       closeBtns.forEach((closeBtn) => {
+        console.log(closeBtn)
         closeBtn.addEventListener('click', () => closeModal(modal))
       })
     }

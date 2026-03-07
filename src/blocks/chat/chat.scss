@@ -3,11 +3,15 @@
 
 // chat
 .chat {
-  background-color: rgb(83 118 83);
-  background-image: url("../images/bg-telegram.webp");
-  background-repeat: repeat;
-  background-size: 65% auto;
-  background-position: center;
+  //background-color: rgb(83 118 83);
+  //background-image: url("../images/bg-telegram.webp");
+  //background-image: url("../images/bg2.png");
+  //background-image: url("../images/bg3.svg");
+  //background-repeat: repeat;
+  //background-size: 25% auto;
+  //background-position: center;
+  display: flex;
+  flex-direction: column;
   border-radius: 3rem 3rem 0 0;
   overflow: hidden;
   transform: translateY(30rem) scale(.85);
@@ -118,10 +122,36 @@
   }
 
   .chat-messages {
+    flex: 1;
+    position: relative;
+    background-image: url("../images/bg2.png");
+    background-repeat: repeat;
+    background-size: 40% auto;
+    background-position: center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgb(255 255 255 / 54%);
+      backdrop-filter: blur(.05rem);
+    }
+
+    @include tablet {
+      background: none;
+
+      &::before {
+        display: none;
+      }
+    }
 
     &__inner {
+      position: relative;
       padding-block: 3rem 5rem;
       padding-inline: 2rem;
+      z-index: 1;
     }
   }
 }
@@ -141,10 +171,13 @@
       border-radius: .2rem 1.5rem 1.5rem 1.5rem;
       box-shadow: 0 .3rem 1rem rgba(38, 36, 60, 0.07);
       max-width: max-content;
-      width: 80%;
       padding-block: 1.5rem;
       padding-inline: 2rem;
       background-color: $white;
+
+      @include mobile  {
+        width: 80%;
+      }
     }
   }
 
@@ -335,14 +368,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 6rem;
-    height: 6rem;
+    width: 5rem;
+    height: 5rem;
     border-radius: 100%;
     background-image: url("../images/bot.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
     margin-bottom: auto;
+
+    @include tablet {
+      width: 6rem;
+      height: 6rem;
+    }
   }
 
   &__text {
@@ -426,8 +464,13 @@
     gap: .4rem;
     font-size: 1.4rem;
     line-height: 1;
-    color: $white;
+    color: $primary;
     font-style: italic;
+
+    @include tablet {
+      color: $white;
+    }
+
   }
 
   .dots {
