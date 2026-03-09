@@ -3,7 +3,6 @@ const forms = document.querySelectorAll('form.form');
 
 if (forms.length) {
   forms.forEach(form => {
-    console.log(form);
     initForm(form);
   })
 }
