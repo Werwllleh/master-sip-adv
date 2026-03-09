@@ -3,6 +3,7 @@ const forms = document.querySelectorAll('form.form');
 
 if (forms.length) {
   forms.forEach(form => {
+    console.log(form);
     initForm(form);
   })
 }
@@ -72,6 +73,7 @@ function initForm(form) {
 
       // Отправка данных (можно заменить на реальный API)
       console.log('Форма отправлена:', formData);
+      ymGoal('submit')
 
       // Очистка формы и переход к следующему шагу
       form.reset();

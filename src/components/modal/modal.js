@@ -20,7 +20,6 @@ if (modalList.length) {
 
     if (closeBtns.length) {
       closeBtns.forEach((closeBtn) => {
-        console.log(closeBtn)
         closeBtn.addEventListener('click', () => closeModal(modal))
       })
     }

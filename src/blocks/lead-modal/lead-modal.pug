@@ -4,11 +4,15 @@ mixin leadModal(formType='')
     .lead-modal&attributes(attributes)
         .lead-modal__inner
             .lead-modal__header
+                span.lead-modal__header--icon
+                .lead-modal__consultant
+                    p.lead-modal__consultant--name Анастасия
+                    p.lead-modal__consultant--post Онлайн-консультант MASTER-SIP
             .lead-modal__content
                 .lead-modal__message
                     p
                         | Здравствуйте!
                         br
-                        | Напишите свои контакты, и&nbsp;я&nbsp;расскажу Вам подробно обо всех преимуществах строительства СИП объектов
+                        | Напишите свои контакты, и&nbsp;я&nbsp;расскажу Вам подробно обо&nbsp;всех преимуществах строительства СИП&nbsp;объектов
                 .lead-modal__form
                     +form(formType)

@@ -296,7 +296,7 @@ function renderPhoneMessage(message, stepIndex) {
             <label class="form__agree checkbox">
               <input type="checkbox" name="agree" required>
               <span class="checkbox__box"></span>
-              <span>Даю согласие на&nbsp;<a href="">обработку персональных данных</a></span>
+              <span>Даю согласие на&nbsp;<a href="./policy.html" target="_blank">обработку персональных данных</a></span>
             </label>
           </fieldset>
         </form>
@@ -327,6 +327,7 @@ function setupRadioHandlers(messageItem, message) {
 
       removeMessagesAfterStep(step);
       userAnswers[goal] = [type, answer];
+      ymGoal(goal)
       addUserMessage(answer);
       nextStep();
     });
@@ -351,6 +352,7 @@ function setupCardHandlers(messageItem, message) {
 
       removeMessagesAfterStep(step);
       userAnswers[goal] = [type, name];
+      ymGoal(goal)
       addUserMessage(`${name}`);
       nextStep();
     });
@@ -367,6 +369,7 @@ function setupCardHandlers(messageItem, message) {
       removeMessagesAfterStep(step);
       if (goal) {
         userAnswers[goal] = answer;
+        ymGoal(goal)
       }
       addUserMessage(answer);
       nextStep();
@@ -375,7 +378,7 @@ function setupCardHandlers(messageItem, message) {
 }
 
 function setupPhoneHandler(messageItem, message) {
-  const form = messageItem.querySelector('form[data-form="lead"]');
+  const form = messageItem.querySelector('form[data-form="continuity"]');
 
   if (!form) return;
 
@@ -579,3 +582,10 @@ setTimeout(() => {
 setTimeout(() => {
   addMessage(currentStep);
 }, 1500);
+
+function ymGoal(goal = "", id = 107225920, type = "reachGoal") {
+  if (window.ym) {
+    ym(id, type, goal)
+  }
+}
+

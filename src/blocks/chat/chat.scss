@@ -33,7 +33,18 @@
   .chat-advantages {
     padding-block: 1.5rem;
     padding-inline: 1rem;
-    background-color: $white;
+
+    @media (prefers-color-scheme: no-preference) {
+      background-color: $white;
+    }
+
+    @media (prefers-color-scheme: light) {
+      background-color: $white;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background-color: $primary;
+    }
 
     @include mobile  {
       padding-block: 3rem;
@@ -81,8 +92,19 @@
       width: 3rem;
       height: 3rem;
       border-radius: 100%;
-      background-color: $primary;
       transition: transform $transition-default;
+
+      @media (prefers-color-scheme: no-preference) {
+        background-color: $primary;
+      }
+
+      @media (prefers-color-scheme: light) {
+        background-color: $primary;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: $white;
+      }
 
       @include mobile  {
         width: 4rem;
@@ -94,7 +116,14 @@
         height: 2.2rem;*/
         width: 70%;
         height: 70%;
-        color: $white;
+
+        @media (prefers-color-scheme: light) {
+          color: $white;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          color: $primary;
+        }
 
         @include mobile  {
           /*width: 2.5rem;
@@ -108,6 +137,14 @@
       line-height: 1.4;
       font-weight: 600;
       max-width: 25rem;
+
+      @media (prefers-color-scheme: light) {
+        color: $primary;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        color: $white;
+      }
 
       @include mobile  {
         font-size: 1.4rem;
@@ -135,8 +172,19 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      background-color: rgb(255 255 255 / 54%);
       backdrop-filter: blur(.05rem);
+
+      @media (prefers-color-scheme: no-preference) {
+        background-color: rgb(255 255 255 / 54%);
+      }
+
+      @media (prefers-color-scheme: light) {
+        background-color: rgb(255 255 255 / 54%);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: rgb(8 92 42 / 17%);
+      }
     }
 
     @include tablet {
@@ -150,8 +198,12 @@
     &__inner {
       position: relative;
       padding-block: 3rem 5rem;
-      padding-inline: 2rem;
+      padding-inline: 1.5rem;
       z-index: 1;
+
+      @include tablet {
+        padding-inline: 2rem;
+      }
     }
   }
 }
@@ -173,7 +225,14 @@
       max-width: max-content;
       padding-block: 1.5rem;
       padding-inline: 2rem;
-      background-color: $white;
+
+      @media (prefers-color-scheme: light) {
+        background-color: $white;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: $primary;
+      }
 
       @include mobile  {
         width: 80%;
@@ -192,7 +251,14 @@
       max-width: 55rem;
       padding-block: 1.5rem;
       padding-inline: 2rem;
-      background-color: $white;
+
+      @media (prefers-color-scheme: light) {
+        background-color: $white;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: $primary;
+      }
     }
 
     .chat-message__date {
@@ -208,7 +274,14 @@
       max-width: max-content;
       padding-block: 1.5rem;
       padding-inline: 2rem;
-      background-color: $white;
+
+      @media (prefers-color-scheme: light) {
+        background-color: $white;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: $primary;
+      }
     }
 
     .chat-message__buttons {
@@ -225,7 +298,7 @@
         justify-content: center;
         padding: .9rem 3rem;
         border-radius: 1.6rem;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         background-color: $white;
         border: 2px solid $primary;
         line-height: 1;
@@ -243,6 +316,10 @@
           background-color: $primary-active;
           border-color: $primary-active;
         }
+
+        @include tablet {
+          font-size: 1.5rem;
+        }
       }
     }
 
@@ -258,7 +335,14 @@
       max-width: max-content;
       padding-block: 1.5rem;
       padding-inline: 2rem;
-      background-color: $white;
+
+      @media (prefers-color-scheme: light) {
+        background-color: $white;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: $primary;
+      }
     }
 
     .chat-message__cards {
@@ -283,7 +367,7 @@
         justify-content: center;
         padding: .9rem 3rem;
         border-radius: 1.6rem;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         background-color: $white;
         border: 2px solid $primary;
         line-height: 1;
@@ -301,6 +385,10 @@
           background-color: $primary-active;
           border-color: $primary-active;
         }
+
+        @include tablet {
+          font-size: 1.5rem;
+        }
       }
     }
 
@@ -316,7 +404,14 @@
       max-width: max-content;
       padding-block: 1.5rem;
       padding-inline: 2rem;
-      background-color: $white;
+
+      @media (prefers-color-scheme: light) {
+        background-color: $white;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: $primary;
+      }
     }
 
     .chat-message__form {
@@ -328,6 +423,28 @@
 
       input {
         border-color: $white;
+
+        &:checked + .checkbox__box {
+
+          @media (prefers-color-scheme: light) {
+            border-color: $primary;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            border-color: $primary;
+          }
+
+          &::before {
+            @media (prefers-color-scheme: light) {
+              border-color: $primary;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              border-color: $primary;
+            }
+          }
+
+        }
       }
 
       button[type="submit"] {
@@ -337,14 +454,33 @@
       .checkbox {
 
         .checkbox__box {
-          border-color: $white;
+          @media (prefers-color-scheme: light) {
+            border-color: $white;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            border-color: $primary;
+          }
         }
 
         span {
-          color: $white;
+          @media (prefers-color-scheme: light) {
+            color: $white;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: $primary;
+            font-weight: 700;
+          }
 
           a {
-            color: $white;
+            @media (prefers-color-scheme: light) {
+              color: $white;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              color: $primary;
+            }
           }
         }
       }
@@ -384,15 +520,33 @@
   }
 
   &__text {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     line-height: 1.55;
-    color: $black;
+
+    @media (prefers-color-scheme: light) {
+      color: $black;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      color: $white;
+    }
+
+    @include tablet {
+      font-size: 1.6rem;
+    }
   }
 
   &__date {
     margin-top: 1rem;
     font-size: 1.25rem;
-    color: $primary;
+
+    @media (prefers-color-scheme: light) {
+      color: $primary;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      color: $white;
+    }
   }
 }
 
@@ -444,9 +598,13 @@
 
   &__title {
     color: $primary;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     line-height: 1.35;
     font-weight: 600;
+
+    @include tablet {
+      font-size: 1.8rem;
+    }
   }
 
   &__price {}

@@ -2,4 +2,108 @@
 @use '../../app/scss/mixins.scss' as *;
 
 // lead-modal
-.lead-modal {}
+.lead-modal {
+  border-radius: 2rem;
+  overflow: hidden;
+
+  &__inner {}
+
+  &__header {
+    padding-block: 2rem;
+    padding-inline: 1.5rem;
+    background-color: $primary;
+    display: flex;
+    align-items: center;
+    gap: 0 1rem;
+    box-shadow: 0 0.3rem 1rem rgb(10 59 0 / 57%);
+
+    .lead-modal__header--icon {
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 5rem;
+      height: 5rem;
+      border-radius: 100%;
+      background-image: url("../images/bot.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      margin-bottom: auto;
+    }
+
+    .lead-modal__header--post {
+      color: $white;
+      font-size: 1.8rem;
+    }
+
+    @include tablet {
+      padding-inline: 3rem;
+      gap: 0 2rem;
+    }
+  }
+
+  &__consultant {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem 0;
+    color: $white;
+
+    .lead-modal__consultant--name {
+      font-size: 1.6rem;
+
+      @include tablet {
+        font-size: 1.8rem;
+      }
+    }
+
+    .lead-modal__consultant--post {
+      font-size: 1.35rem;
+      color: #dadada;
+
+      @include tablet {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  &__content {
+    background-color: $white;
+    padding-inline: 1.5rem;
+    padding-block: 2rem 3rem;
+
+    @include tablet {
+      padding-block: 2rem 4rem;
+      padding-inline: 3rem;
+    }
+  }
+
+  &__message {
+    border-radius: 0.2rem 1.5rem 1.5rem 1.5rem;
+    box-shadow: 0 0.3rem 1rem rgb(10 59 0 / 57%);
+    max-width: max-content;
+    padding-block: 1rem;
+    padding-inline: 1.5rem;
+    background-color: #fff;
+
+    @include tablet {
+      padding-block: 1.5rem;
+      padding-inline: 2rem;
+    }
+
+    p {
+      color: $primary;
+      line-height: 1.45;
+      font-size: 1.35rem;
+      font-weight: 700;
+
+      @include tablet {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  &__form {
+    margin-top: 2rem;
+  }
+}
