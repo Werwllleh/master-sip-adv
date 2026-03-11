@@ -62,19 +62,33 @@ function initForm(form) {
 
     if (isValid) {
 
-      console.log(userAnswers)
-
       const formData = {
         name: inputName.value,
         phone: inputPhone.value,
-        agree: checkbox.checked
+        privacyPolicyAccepted: checkbox.checked
       };
 
-      // Отправка данных (можно заменить на реальный API)
-      console.log('Форма отправлена:', formData);
-      ymGoal('submit')
+      fetch('http://localhost:3000/api/sales-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(data => {
+          console.log('Успешно:', data);
+          ymGoal('submit');
+          form.reset();
+        })
+        .catch(error => {
+          console.error('Ошибка:', error);
+        });
 
-      // Очистка формы и переход к следующему шагу
+      // Очистка формы
       form.reset();
       /*addUserMessage('Форма отправлена');
       nextStep();*/
