@@ -68,7 +68,7 @@ function initForm(form) {
         privacyPolicyAccepted: checkbox.checked
       };
 
-      fetch('http://localhost:3000/api/sales-lead', {
+      fetch('https://master-sip.ru/api/sales-lead', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
