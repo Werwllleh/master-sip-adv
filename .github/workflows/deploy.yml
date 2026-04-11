@@ -16,27 +16,10 @@ jobs:
           persist-credentials: true
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '24'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Commit dist to dev and push to production
+      - name: Deploy dist folder to dist and production branches
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Коммитим dist в ветку dev
-          git add dist
-          git diff --cached --quiet || git commit -m "Build: $(date '+%Y-%m-%d %H:%M:%S')"
-          git push origin dev
-
-          # Создаём/обновляем ветку production из dev
-          git branch -f production dev
-          git push -f origin production
+          git subtree push --prefix dist origin dist
+          git subtree push --prefix dist origin production
