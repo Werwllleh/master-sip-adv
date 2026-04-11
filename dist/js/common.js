@@ -1,0 +1,973 @@
+document.addEventListener('DOMContentLoaded', function () {
+/**
+ * Парсит UTM-метки из URL и сохраняет в cookie на 30 дней
+ */
+function saveUtmToCookie() {
+  const params = new URLSearchParams(window.location.search);
+  const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const cookieMaxAge = 30 * 24 * 60 * 60; // 30 дней
+  const hasUtm = utmKeys.some(key => params.has(key));
+
+  if (!hasUtm) return;
+
+  utmKeys.forEach(key => {
+    const value = params.get(key);
+    if (value) {
+      document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=${cookieMaxAge}; SameSite=Lax`;
+    }
+  });
+}
+
+/**
+ * Получает UTM-метки из cookie
+ * @returns {Object|null} Объект с UTM-метками или null, если их нет
+ */
+function getUtmFromCookies() {
+  const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+    const [name, ...valueParts] = cookie.split('=');
+    acc[name] = decodeURIComponent(valueParts.join('='));
+    return acc;
+  }, {});
+
+  const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const utmData = {};
+  let hasData = false;
+
+  utmKeys.forEach(key => {
+    if (cookies[key]) {
+      utmData[key] = cookies[key];
+      hasData = true;
+    }
+  });
+
+  return hasData ? utmData : null;
+}
+
+// Инициализация UTM-меток при загрузке страницы
+saveUtmToCookie();
+
+const date = new Date();
+
+let currentStep = 1;
+let userAnswers = {};
+
+/* ================= helpers ================= */
+
+function getChatHeight() {
+  const heightWindow = window.innerHeight;
+
+  const titleSection = document.querySelector('.page-main-about');
+  const chat = document.querySelector('.chat');
+  const header = document.querySelector('.header');
+
+
+
+  if (!titleSection || !chat || !header) return;
+
+  const titleSectionHeight = titleSection.offsetHeight;
+  const headerHeight = header.offsetHeight;
+
+  const chatMinHeightValue = heightWindow - headerHeight - titleSectionHeight;
+
+  chat.style.minHeight = `${(chatMinHeightValue) / 10}rem`;
+}
+
+function showChat() {
+  const chat = document.querySelector('.chat');
+
+  if (!chat) return;
+
+  chat.classList.add('shown');
+}
+
+function initChat() {
+  getChatHeight();
+  setTimeout(() => {
+    showChat();
+  }, 400);
+}
+
+function scrollToBottom(element) {
+
+  if (element) {
+    return element.scrollIntoView(
+      {behavior: "smooth", block: "center", inline: "start"}
+    )
+  }
+}
+
+function formatTime(date) {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+function getMessageByStep(step) {
+  return messages.find(m => m.step === step);
+}
+
+function getNextStep(current) {
+  return current + 1;
+}
+
+/* ================= typing indicator ================= */
+
+let typingIndicator = null;
+
+function showTypingIndicator() {
+  const chat = document.querySelector('.chat');
+  const messagesField = chat.querySelector('.chat-messages__inner');
+
+  if (!chat || !messagesField) return;
+
+  hideTypingIndicator();
+
+  typingIndicator = document.createElement('div');
+  typingIndicator.className = 'chat-message-typing';
+  typingIndicator.innerHTML = `
+    <div class="typing">
+        Вера печатает<span class="dots"></span>
+      </div>
+  `;
+
+  messagesField.appendChild(typingIndicator);
+}
+
+function hideTypingIndicator() {
+  if (typingIndicator) {
+    typingIndicator.remove();
+    typingIndicator = null;
+  }
+}
+
+/* ================= message renderers ================= */
+
+function renderTextMessage(message, stepIndex) {
+
+  let skipValue = false;
+
+  let str = message.text;
+  let text = ''
+
+  if (str === '{pre_last}') {
+    const buildType = userAnswers.question1?.[1];
+    const projectStatus = userAnswers.question2?.[0];
+
+    if (projectStatus.toLowerCase() === 'project_yes') {
+      skipValue = true;
+    } else {
+      switch (buildType?.toLowerCase()) {
+        case 'дом':
+          text = 'Я рассчитаю стоимость вашего дома под ключ и перезвоню Вам через несколько минут.';
+          break;
+        case 'баня':
+          text = 'Я рассчитаю стоимость вашей бани под ключ и перезвоню Вам через несколько минут.';
+          break;
+        case 'гараж':
+          text = 'Я рассчитаю стоимость вашего гаража под ключ и перезвоню Вам через несколько минут.';
+          break;
+        case 'хозяйственная постройка':
+          text = 'Я рассчитаю стоимость вашей хозяйственной постройки под ключ и перезвоню Вам через несколько минут.';
+          break;
+        default:
+          text = 'Я рассчитаю стоимость вашего дома под ключ и перезвоню Вам через несколько минут.';
+          break;
+      }
+    }
+  }
+
+  return {
+    html: `
+      <div class="chat-message__icon"></div>
+      <div class="chat-message__inner">
+        <div class="chat-message__text">${text ? text : str}</div>
+        <div class="chat-message__date">${formatTime(date)}</div>
+      </div>
+    `,
+    skip: skipValue
+  };
+}
+
+function renderRadioMessage(message, stepIndex) {
+  let buts = message.buts;
+
+  if (message.category === 'square') {
+    if (userAnswers.question2?.[0] === 'project_yes') {
+      buts = []
+    } else {
+      buts = message.buts.filter((item) => item.type && item.type.includes(userAnswers.question1?.[0]));
+    }
+  }
+
+  const buttonsHtml = buts.map(btn => `
+    <button class="chat-message__btn" data-answer="${btn.text}" data-type="${btn.type}" data-goal="${message.goal}" data-category="${message.category}" data-step="${stepIndex}">
+      ${btn.text}
+    </button>
+  `).join('');
+
+  let str = message.text;
+  let text = ''
+
+  if (str === '{project_plan}') {
+    const buildType = userAnswers.question1?.[1];
+
+    switch (buildType?.toLowerCase()) {
+      case 'дом':
+        str = 'дома';
+        break;
+      case 'баня':
+        str = 'бани';
+        break;
+      case 'гараж':
+        str = 'гаража';
+        break;
+      case 'хозяйственная постройка':
+        str = 'хозяйственной постройки';
+        break;
+      default:
+        str = 'дома';
+        break;
+    }
+
+    text = message.text.replace('{project_plan}', `У Вас есть проект ${str}?`);
+  }
+
+  return {
+    html: `
+      <div class="chat-message__icon"></div>
+      <div class="chat-message__inner">
+        <div class="chat-message__text">${text ? text : str}</div>
+        <div 
+            class="chat-message__buttons"
+            style="transform: translateY(3rem); opacity: 0; visibility: hidden;"
+        >
+            ${buttonsHtml}
+        </div>
+        <div class="chat-message__date">${formatTime(date)}</div>
+      </div>
+    `,
+    skip: !buts.length
+  };
+}
+
+function renderCardMessage(message, stepIndex) {
+  let cards = message.buts;
+  let buttons = message.buttons || [];
+
+  let cardsHtml = '';
+  let buttonsHtml = '';
+
+  if (message.category === 'build-type') {
+    cards = message.buts.filter((item) => item.type && item.type.includes(userAnswers.question3?.[0]));
+  }
+
+  if (cards.length) {
+    cardsHtml = cards.map(item => `
+      <div class="chat-card" data-name="${item.name}" data-goal="${message.goal}" data-type="${item.type}" data-category="${message.category}">
+        <img src="${item.img}" alt="${item.name}" class="chat-card__img">
+        <div class="chat-card__content">
+          <h4 class="chat-card__title">${item.name}</h4>
+          <p class="chat-card__price">${item.price}</p>
+          <p class="chat-card__meta">${item.diameter} | ${item.meterage}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  if (buttons.length) {
+    buttonsHtml = buttons.map(btn => `
+        <button class="chat-message__btn" data-answer="${btn.text}" data-goal="${message.goal}" data-step="${stepIndex}">
+          ${btn.text}
+        </button>
+      `).join('');
+  }
+
+  let str = message.text;
+  let text = ''
+
+  if (str === '{variants}') {
+    const buildType = userAnswers.question1?.[1];
+
+    switch (buildType?.toLowerCase()) {
+      case 'дом':
+        str = 'дома';
+        break;
+      case 'баня':
+        str = 'бани';
+        break;
+      case 'гараж':
+        str = 'гаража';
+        break;
+      case 'хозяйственная постройка':
+        str = 'хозяйственной постройки';
+        break;
+      default:
+        str = 'дома';
+        break;
+    }
+
+    text = message.text.replace('{variants}', `Выберите тип ${str}`);
+  }
+
+
+  return {
+    html: `
+      <div class="chat-message__icon"></div>
+      <div class="chat-message__inner">
+        <div class="chat-message__text">${text ? text : str}</div>
+        ${cardsHtml !== "" ? 
+          `<div class="chat-message__cards" style="transform: translateY(3rem); opacity: 0; visibility: hidden;">
+            ${cardsHtml}
+          </div>` : ''}
+        ${buttonsHtml !== "" ? 
+          `<div class="chat-message__buttons" style="transform: translateY(3rem); opacity: 0; visibility: hidden;">
+            ${buttonsHtml}
+          </div>` : ''}
+        <div class="chat-message__date">${formatTime(date)}</div>
+      </div>
+    `,
+    skip: !cards.length
+  };
+}
+
+function renderPhoneMessage(message, stepIndex) {
+  return {
+    html: `
+      <div class="chat-message__icon"></div>
+      <div class="chat-message__inner">
+        <div class="chat-message__text">${message.text}</div>
+        <form class="chat-message__form form" data-goal="submit" data-form="continuity">
+          <fieldset class="form__fieldset">
+            <input type="text" name="name" autocomplete class="form__input chat-message__input" placeholder="Ваше имя" required>
+            <input type="text" name="phone" inputmode="numeric" class="form__input  chat-message__input" placeholder="+7 (___) ___-__-__" required>
+            <button type="submit" class="form__submit chat-message__btn">Отправить</button>
+            <label class="form__agree checkbox">
+              <input type="checkbox" name="agree" required>
+              <span class="checkbox__box"></span>
+              <span>Даю согласие на&nbsp;<a href="./policy.html" target="_blank">обработку персональных данных</a></span>
+            </label>
+          </fieldset>
+        </form>
+        <div class="chat-message__date">${formatTime(date)}</div>
+      </div>
+    `,
+    skip: false
+  };
+}
+
+/* ================= message handlers ================= */
+
+function setupRadioHandlers(messageItem, message) {
+  const buttons = messageItem.querySelectorAll('.chat-message__btn');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      const answer = this.dataset.answer;
+      const goal = this.dataset.goal;
+      const type = this.dataset.type;
+      const step = parseInt(this.dataset.step);
+
+      buttons.forEach((item) => {
+        item.classList.remove('active');
+      })
+
+      btn.classList.add('active');
+
+      removeMessagesAfterStep(step);
+      userAnswers[goal] = [type, answer];
+      ymGoal(goal)
+      addUserMessage(answer);
+      nextStep();
+    });
+  });
+}
+
+function setupCardHandlers(messageItem, message) {
+  // Обработчик для карточек
+  const cards = messageItem.querySelectorAll('.chat-card');
+  cards.forEach(card => {
+    card.addEventListener('click', function () {
+      const name = this.dataset.name;
+      const type = this.dataset.type;
+      const goal = this.dataset.goal;
+      const step = parseInt(messageItem.dataset.step);
+
+      cards.forEach((item) => {
+        item.classList.remove('active');
+      })
+
+      card.classList.add('active');
+
+      removeMessagesAfterStep(step);
+      userAnswers[goal] = [type, name];
+      ymGoal(goal)
+      addUserMessage(`${name}`);
+      nextStep();
+    });
+  });
+
+  // Обработчик для кнопок под карточками
+  const buttons = messageItem.querySelectorAll('.chat-message__btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      const answer = this.dataset.answer;
+      const goal = this.dataset.goal;
+      const step = parseInt(this.dataset.step);
+
+      removeMessagesAfterStep(step);
+      if (goal) {
+        userAnswers[goal] = answer;
+        ymGoal(goal)
+      }
+      addUserMessage(answer);
+      nextStep();
+    });
+  });
+}
+
+function setupPhoneHandler(messageItem, message) {
+  const form = messageItem.querySelector('form[data-form="continuity"]');
+
+  if (!form) return;
+
+  initForm(form);
+}
+
+/* ================= core functions ================= */
+
+function removeMessagesAfterStep(step) {
+  const chat = document.querySelector('.chat');
+  const messagesField = chat.querySelector('.chat-messages__inner');
+
+  if (!chat || !messagesField) return;
+
+  const allMessages = messagesField.querySelectorAll('.chat-message');
+
+  // Находим индекс сообщения в DOM по step
+  let removeIndex = -1;
+  allMessages.forEach((msg, i) => {
+    const msgStep = parseInt(msg.dataset.step);
+    if (msgStep === step) {
+      removeIndex = i;
+    }
+  });
+
+  // Удаляем все сообщения после найденного
+  allMessages.forEach((msg, i) => {
+    if (i > removeIndex) {
+      msg.remove();
+    }
+  });
+
+  // Очищаем ответы после указанного шага
+  const goalsToDelete = Object.keys(userAnswers).filter(key => {
+    const msg = messages.find(m => m.goal === key);
+    return msg && msg.step > step;
+  });
+
+  goalsToDelete.forEach(key => {
+    delete userAnswers[key];
+  });
+
+  // Устанавливаем текущий шаг на текущий вопрос (не следующий!)
+  // nextStep() сам увеличит его
+  currentStep = step;
+}
+
+function addMessage(step) {
+  const message = getMessageByStep(step);
+
+  if (!message) return;
+
+  const chat = document.querySelector('.chat');
+  const messagesField = chat.querySelector('.chat-messages__inner');
+
+  if (!chat || !messagesField) return;
+
+  const messageType = message.type;
+
+  // Рендерим контент в зависимости от типа
+  const renderers = {
+    text: renderTextMessage,
+    radio: renderRadioMessage,
+    cards: renderCardMessage,
+    phone: renderPhoneMessage
+  };
+
+  const render = renderers[messageType];
+  if (!render) return;
+
+  const rendered = render(message, step);
+
+  // Проверяем, нужно ли пропустить этот шаг
+  if (rendered.skip) {
+    currentStep = step;
+    nextStep();
+    return;
+  }
+
+  const messageItem = document.createElement('div');
+  messageItem.className = `chat-message message--${messageType}`;
+  messageItem.dataset.step = step;
+  messageItem.style = 'transform: translateX(-10rem); opacity: 0; visibility: hidden;';
+
+  messageItem.innerHTML = rendered.html;
+  messagesField.appendChild(messageItem);
+
+  setTimeout(() => {
+    messageItem.style = '';
+  }, 100);
+
+  setTimeout(() => {
+    scrollToBottom(messageItem);
+  }, 300)
+
+  const buttonsWrap = messageItem.querySelector('.chat-message__buttons');
+  if (buttonsWrap) {
+    setTimeout(() => {
+      buttonsWrap.style = '';
+    }, 350)
+  }
+
+  const cardsWrap = messageItem.querySelector('.chat-message__cards');
+  if (cardsWrap) {
+    setTimeout(() => {
+      cardsWrap.style = '';
+    }, 350)
+  }
+
+  // Обработчики для интерактивных типов
+  const handlers = {
+    radio: setupRadioHandlers,
+    cards: setupCardHandlers,
+    phone: setupPhoneHandler
+  };
+
+  const setupHandler = handlers[messageType];
+  if (setupHandler) {
+    setupHandler(messageItem, message);
+  }
+
+  // Обработка sleep для перехода к следующему вопросу (только для text-сообщений)
+  if (messageType === 'text' && message.sleep) {
+    setTimeout(() => {
+      nextStep();
+    }, parseInt(message.sleep));
+  } else if (messageType === 'text' && !message.sleep) {
+    setTimeout(() => {
+      nextStep();
+    }, 500);
+  }
+}
+
+function addUserMessage(text) {
+  const chat = document.querySelector('.chat');
+  const messagesField = chat.querySelector('.chat-messages__inner');
+
+  if (!chat || !messagesField) return;
+
+  const messageItem = document.createElement('div');
+  messageItem.className = 'chat-message message--user';
+  messageItem.style = 'transform: translateX(10rem); opacity: 0; visibility: hidden;';
+
+  messageItem.innerHTML = `
+    <div class="chat-message__inner">
+      <div class="chat-message__text">${text}</div>
+      <div class="chat-message__date">${formatTime(date)}</div>
+    </div>
+  `;
+
+  messagesField.appendChild(messageItem);
+
+  setTimeout(() => {
+    messageItem.style = '';
+  }, 100);
+
+  setTimeout(() => {
+    scrollToBottom(messageItem);
+  }, 300)
+}
+
+function nextStep() {
+  currentStep = getNextStep(currentStep);
+
+  showTypingIndicator();
+
+  const nextMessage = getMessageByStep(currentStep);
+
+  if (!nextMessage) return;
+
+  // Проверка на noscroll (задержка перед показом сообщения)
+  if (nextMessage.noscroll) {
+    const delay = typeof nextMessage.noscroll === 'string'
+      ? parseInt(nextMessage.noscroll)
+      : 100; // небольшая задержка для булевых значений
+
+    setTimeout(() => {
+      hideTypingIndicator();
+      addMessage(currentStep);
+    }, delay);
+  } else {
+    // Небольшая задержка для эффекта "печатания"
+
+    setTimeout(() => {
+      hideTypingIndicator();
+      addMessage(currentStep);
+    }, 1000);
+  }
+}
+
+/* ================= init ================= */
+
+initChat();
+
+showTypingIndicator();
+
+setTimeout(() => {
+  hideTypingIndicator();
+}, 1000);
+
+setTimeout(() => {
+  addMessage(currentStep);
+}, 1500);
+
+function ymGoal(goal = "", id = 107225920, type = "reachGoal") {
+  if (window.ym) {
+    ym(id, type, goal)
+  }
+}
+
+
+
+const overlay = document.querySelector('.overlay');
+const header = document.querySelector('.header');
+const headerMobileButton = document.querySelector('.header__mobile-button');
+const headerMobileWrap = document.querySelector('.header-mobile-wrap');
+
+if (header && overlay) {
+
+  if (headerMobileButton && headerMobileWrap) {
+    headerMobileButton.addEventListener('click', () => {
+      if (header.classList.contains('mobile-is-active')) {
+        closeMobileHeader()
+      } else {
+        blockWrap(true)
+        overlay.classList.add('active')
+        header.classList.add('mobile-is-active')
+      }
+    })
+  }
+
+}
+
+function closeMobileHeader() {
+  const header = document.querySelector('.header');
+
+  if (header && header.classList.contains('mobile-is-active')) {
+    header.classList.remove('mobile-is-active')
+    overlay.classList.remove('active')
+    blockWrap(false)
+  }
+}
+
+if (overlay) {
+  overlay.addEventListener('click', () => {
+    closeMobileHeader()
+  })
+}
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth >= 768) {
+    closeMobileHeader()
+  }
+})
+
+
+
+const breadcrumbs = document.querySelector('.breadcrumbs')
+if (breadcrumbs) {
+  const list = breadcrumbs.querySelector('.breadcrumbs__list');
+
+  const checkOverflow = () => {
+    // Проверяем переполнение справа
+    const hasRightOverflow = list.scrollWidth > list.clientWidth && list.scrollLeft < (list.scrollWidth - list.clientWidth-1);
+    breadcrumbs.classList.toggle('breadcrumbs--has-right-overflow', hasRightOverflow);
+
+    // Проверяем скролл слева
+    const hasLeftOverflow = list.scrollLeft > 0;
+    breadcrumbs.classList.toggle('breadcrumbs--has-left-overflow', hasLeftOverflow);
+  };
+
+  // Первоначальная проверка
+  checkOverflow();
+
+  // Проверка при скролле
+  list.addEventListener('scroll', checkOverflow);
+
+  // Проверка при изменении размера окна
+  window.addEventListener('resize', checkOverflow);
+}
+
+
+const forms = document.querySelectorAll('form.form');
+
+if (forms.length) {
+  forms.forEach(form => {
+    initForm(form);
+  })
+}
+
+function initForm(form) {
+  form.setAttribute('novalidate', '');
+
+  const inputName = form.querySelector('input[name="name"]');
+  const inputPhone = form.querySelector('input[name="phone"]');
+  const checkbox = form.querySelector('.checkbox input[name="agree"]');
+
+  if (!inputName || !inputPhone || !checkbox) return;
+
+  const maskOptions = {
+    mask: '+{7} 000 000-00-00',
+    overwrite: true
+  };
+  const mask = IMask(inputPhone, maskOptions);
+
+  inputName.addEventListener('input', function () {
+    if (this.value.length >= 3) {
+      this.classList.remove('error');
+    } else {
+      this.classList.add('error');
+    }
+  });
+
+  inputPhone.addEventListener('input', function () {
+    if (mask.unmaskedValue.length === 11) {
+      this.classList.remove('error');
+    } else {
+      this.classList.add('error');
+    }
+  });
+
+  checkbox.addEventListener('change', function () {
+    if (this.checked) {
+      this.closest('.checkbox').classList.remove('error');
+    }
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    let isValid = true;
+
+    if (!validateField(inputName)) {
+      isValid = false;
+    }
+    if (!validateField(inputPhone, mask)) {
+      isValid = false;
+    }
+
+    if (!validateCheckbox(checkbox)) {
+      isValid = false;
+    }
+
+    if (isValid) {
+
+      const formData = {
+        name: inputName.value,
+        phone: inputPhone.value,
+        privacyPolicyAccepted: checkbox.checked
+      };
+
+      // Добавляем UTM-метки из cookie
+      const utmData = getUtmFromCookies();
+      if (utmData) {
+        Object.assign(formData, utmData);
+      }
+
+      fetch('https://master-sip.ru/api/sales-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(data => {
+          console.log('Успешно:', data);
+          ymGoal('submit');
+          form.reset();
+        })
+        .catch(error => {
+          console.error('Ошибка:', error);
+        });
+
+      // Очистка формы
+      form.reset();
+      /*addUserMessage('Форма отправлена');
+      nextStep();*/
+    }
+
+  })
+}
+
+function validateField(field, mask) {
+  if (!field.value || (field.type === 'tel' && mask?.unmaskedValue.length !== 11)) {
+
+    field.classList.add('error');
+    return false;
+  }
+  field.classList.remove('error');
+  return true;
+}
+
+function validateCheckbox(field) {
+  if (!field.checked) {
+    field.closest('.checkbox').classList.add('error');
+    return false;
+  }
+  field.closest('.checkbox').classList.remove('error');
+  return true;
+}
+
+const modalList = document.querySelectorAll('.modal')
+
+if (modalList.length) {
+
+  modalList.forEach((modal) => {
+    const closeBtns = modal.querySelectorAll('.modal__close');
+
+    let mouseDownInside = false;
+
+    modal.addEventListener('mousedown', (evt) => {
+      mouseDownInside = !!evt.target.closest('.modal__window');
+    });
+    modal.addEventListener('mouseup', (evt) => {
+      const mouseUpInside = !!evt.target.closest('.modal__window');
+
+      if (!mouseDownInside && !mouseUpInside) {
+        closeModal(modal);
+      }
+    });
+
+    if (closeBtns.length) {
+      closeBtns.forEach((closeBtn) => {
+        closeBtn.addEventListener('click', () => closeModal(modal))
+      })
+    }
+
+    /*modal.addEventListener('click', (evt) => {
+      if (!evt.target.closest('.modal__window')) {
+        closeModal(modal)
+      }
+    })*/
+  })
+
+  const triggerList = document.querySelectorAll('*[data-modal]')
+  if (triggerList.length) {
+    triggerList.forEach((trigger) => {
+
+      trigger.addEventListener('click', () => {
+        showModal(trigger.dataset.modal)
+      })
+    })
+  }
+}
+
+function getScrollbarWidth() {
+  const hasScrollbar = document.documentElement.scrollHeight > document.documentElement.clientHeight;
+
+  if (!hasScrollbar) return 0;
+
+  const outer = document.createElement('div');
+  outer.style.visibility = 'hidden';
+  outer.style.overflow = 'scroll';
+  outer.style.width = '100px';
+  outer.style.height = '100px';
+  outer.style.position = 'absolute';
+  outer.style.top = '-9999px';
+
+  document.body.appendChild(outer);
+
+  const inner = document.createElement('div');
+  inner.style.width = '100%';
+  outer.appendChild(inner);
+
+  const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+
+  document.body.removeChild(outer);
+
+  return scrollbarWidth;
+}
+
+function blockWrap(status) {
+  const wrap = document.querySelector('html');
+  const backgroundImage = document.querySelector('.background-image');
+
+  if (!wrap || !backgroundImage) return;
+
+  if (status) {
+    wrap.classList.add('block');
+    wrap.style.marginRight = getScrollbarWidth() + 'px';
+    backgroundImage.style.marginRight = getScrollbarWidth() + 'px';
+  } else {
+    wrap.classList.remove('block');
+    wrap.style.marginRight = '';
+    backgroundImage.style.marginRight = '';
+  }
+}
+
+function showModal(name) {
+  const modal = document.querySelector(`.modal-${name}`)
+  if (!modal) {
+    console.error(`Модальное окно ${name} не найдено`)
+    return
+  }
+
+  blockWrap(true)
+
+  modal.style.display = 'flex'
+
+  setTimeout(() => {
+    modal.classList.add('modal--show')
+  }, 50)
+
+}
+
+function closeModal(modal) {
+  if (!modal) return;
+
+  const headerSearchActive = document.querySelector('.header-search.shown');
+  const headerMultiblockActive = document.querySelector('.header-multiblock.active');
+
+  setTimeout(() => {
+    modal.classList.remove('modal--show');
+
+    setTimeout(() => {
+      if (!headerSearchActive && !headerMultiblockActive) {
+        blockWrap(false)
+      }
+      modal.style.display = '';
+    }, 300);
+  });
+}
+
+function closeModalByName(name) {
+  const modal = document.querySelector(`.modal-${name}`)
+
+  if (!modal) return;
+
+  if (modal.classList.contains('modal--show')) {
+    modal.classList.remove('modal--show')
+
+    setTimeout(() => {
+      blockWrap(false)
+      modal.style.display = ''
+    }, 300)
+  }
+}
+
+
+});
