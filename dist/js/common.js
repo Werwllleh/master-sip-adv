@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function saveUtmToCookie() {
   const params = new URLSearchParams(window.location.search);
-  const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const utmKeys = ['utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm'];
   const cookieMaxAge = 30 * 24 * 60 * 60; // 30 дней
   const hasUtm = utmKeys.some(key => params.has(key));
 
@@ -29,7 +29,7 @@ function getUtmFromCookies() {
     return acc;
   }, {});
 
-  const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const utmKeys = ['utmSource', 'utmMedium', 'utmCampaign', 'utmContent', 'utmTerm'];
   const utmData = {};
   let hasData = false;
 
