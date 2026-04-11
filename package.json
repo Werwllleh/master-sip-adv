@@ -22,6 +22,8 @@
     "gulp-cached": "^1.1.1",
     "gulp-changed": "^5.0.2",
     "gulp-gh-pages": "^0.5.4",
+    "gulp-postcss": "^10.0.0",
+    "postcss-sort-media-queries": "^6.4.4",
     "reset-css": "^5.0.2"
   }
 }

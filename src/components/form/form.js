@@ -68,6 +68,12 @@ function initForm(form) {
         privacyPolicyAccepted: checkbox.checked
       };
 
+      // Добавляем UTM-метки из cookie
+      const utmData = getUtmFromCookies();
+      if (utmData) {
+        Object.assign(formData, utmData);
+      }
+
       fetch('https://master-sip.ru/api/sales-lead', {
         method: 'POST',
         headers: {

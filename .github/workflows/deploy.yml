@@ -1,55 +1,60 @@
-name: Deploy to dist branch
+name: Deploy to production branch
 
 on:
   push:
     branches:
-      - dev   # или dev, откуда деплоим
+      - dev
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Клонируем репозиторий
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: true # чтобы пушить обратно
-          fetch-depth: 0            # полная история
+          persist-credentials: true
+          fetch-depth: 0
 
-      # 2. Устанавливаем Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '24'   # любая версия Node.js, которая у тебя в проекте
+          node-version: '24'
 
-      # 3. Устанавливаем зависимости
       - name: Install dependencies
         run: npm ci
 
-      # 4. Билдим проект
       - name: Build
         run: npm run build
 
-      # 5. Пушим dist в ветку dist
-      - name: Deploy to dist branch
+      - name: Deploy to production branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # dist есть?
+
+          # Убеждаемся, что папка dist существует
           test -d dist
-          
-          # Создаем временную ветку из dist
-          git fetch origin
-          git checkout dist || git checkout --orphan dist
-          
-          git rm -rf . || true
-          
-          # Копируем билд
+
+          # Получаем текущую ветку dev (источник)
+          DEV_BRANCH="dev"
+          # Целевая ветка — production
+          TARGET_BRANCH="production"
+
+          # Проверяем, существует ли ветка production удалённо
+          if git ls-remote --exit-code --heads origin "$TARGET_BRANCH" 2>/dev/null; then
+            git checkout "$TARGET_BRANCH"
+          else
+            # Создаём orphan-ветку, если production ещё нет
+            git checkout --orphan "$TARGET_BRANCH"
+            git rm -rf . 2>/dev/null || true
+          fi
+
+          # Полностью заменяем содержимое на билд из dist
+          git rm -rf . 2>/dev/null || true
           cp -r dist/* .
-          
+          cp dist/.* . 2>/dev/null || true  # скрытые файлы, если есть
+
           # Коммит и пуш
-          git add .
-          git commit -m "Deploy from GitHub Actions: $(date '+%Y-%m-%d %H:%M:%S')"
-          git push -f origin dist
+          git add -A
+          git diff --cached --quiet || git commit -m "Deploy production: $(date '+%Y-%m-%d %H:%M:%S')"
+          git push -f origin "$TARGET_BRANCH"

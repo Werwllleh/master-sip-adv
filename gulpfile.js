@@ -10,6 +10,8 @@ import browserSyncPkg from 'browser-sync';
 import {deleteAsync} from 'del';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
+import postcss from 'gulp-postcss';
+import sortMediaQueries from 'postcss-sort-media-queries';
 
 const sass = gulpSass(dartSass);
 const browserSync = browserSyncPkg.create();
@@ -58,6 +60,9 @@ export const html = () => {
 export const styles = () =>
   gulp.src('src/app/scss/index.scss')
     .pipe(sass().on('error', sass.logError))
+    .pipe(postcss([
+      sortMediaQueries({ sort: 'mobile-first' })
+    ]))
     .pipe(rename('style.css'))
     .pipe(gulp.dest('dist/css'))
     // .pipe(browserSync.stream({match: '**/*.css'}));
